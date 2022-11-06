@@ -203,47 +203,7 @@ public:
     painter.setPen(QPen(opt.palette.buttonText(), 1.0));
     painter.setRenderHint(QPainter::Antialiasing);
 
-    qreal x = width() / 2.0;
-    qreal y = height() / 2.0;
-
-    QPainterPath path;
-    if (mKind == Fetch) {
-      path.moveTo(x + 8, y - 6);
-      path.quadTo(x + 8, y - 2, x - 1, y - 2);
-      path.lineTo(x - 1, y - 6);
-      path.lineTo(x - 7, y);
-      path.lineTo(x - 1, y + 6);
-      path.lineTo(x - 1, y + 2);
-      path.quadTo(x + 8, y + 2, x + 8, y - 6);
-    } else if (mKind == FetchAll) {
-      path.moveTo(x + 8, y - 6);
-      path.quadTo(x + 8, y - 2, x - 1, y - 2);
-      path.lineTo(x - 1, y - 6);
-      path.lineTo(x - 7, y);
-      path.lineTo(x - 1, y + 6);
-      path.lineTo(x - 1, y + 2);
-      path.quadTo(x + 8, y + 2, x + 8, y - 2);
-      path.quadTo(x + 8, y, x - 1, y);
-      path.quadTo(x + 8, y, x + 8, y - 6);
-    } else if (mKind == Pull) {
-      path.moveTo(x - 7, y);
-      path.lineTo(x - 1, y - 6);
-      path.lineTo(x - 1, y - 2);
-      path.lineTo(x + 7, y - 2);
-      path.lineTo(x + 7, y + 2);
-      path.lineTo(x - 1, y + 2);
-      path.lineTo(x - 1, y + 6);
-      path.lineTo(x - 7, y);
-    } else {
-      path.moveTo(x + 7, y);
-      path.lineTo(x + 1, y + 6);
-      path.lineTo(x + 1, y + 2);
-      path.lineTo(x - 7, y + 2);
-      path.lineTo(x - 7, y - 2);
-      path.lineTo(x + 1, y - 2);
-      path.lineTo(x + 1, y - 6);
-      path.lineTo(x + 7, y);
-    }
+    const QPainterPath path = composeIconPath();
 
     // Draw outline on high resolution displays.
     if (window()->windowHandle()->devicePixelRatio() > 1.0) {
@@ -291,6 +251,62 @@ public:
 private:
   Kind mKind;
   int mBadge = 0;
+
+  QPainterPath composeIconPath() const {
+    QPainterPath path;
+
+    qreal x = width() / 2.0;
+    qreal y = height() / 2.0;
+
+    switch (mKind) {
+      case Fetch: {
+        path.moveTo(x + 8, y - 6);
+        path.quadTo(x + 8, y - 2, x - 1, y - 2);
+        path.lineTo(x - 1, y - 6);
+        path.lineTo(x - 7, y);
+        path.lineTo(x - 1, y + 6);
+        path.lineTo(x - 1, y + 2);
+        path.quadTo(x + 8, y + 2, x + 8, y - 6);
+        break;
+      }
+      case FetchAll: {
+        path.moveTo(x + 8, y - 6);
+        path.quadTo(x + 8, y - 2, x - 1, y - 2);
+        path.lineTo(x - 1, y - 6);
+        path.lineTo(x - 7, y);
+        path.lineTo(x - 1, y + 6);
+        path.lineTo(x - 1, y + 2);
+        path.quadTo(x + 8, y + 2, x + 8, y - 2);
+        path.quadTo(x + 8, y, x - 1, y);
+        path.quadTo(x + 8, y, x + 8, y - 6);
+        break;
+      }
+      case Pull: {
+        path.moveTo(x - 7, y);
+        path.lineTo(x - 1, y - 6);
+        path.lineTo(x - 1, y - 2);
+        path.lineTo(x + 7, y - 2);
+        path.lineTo(x + 7, y + 2);
+        path.lineTo(x - 1, y + 2);
+        path.lineTo(x - 1, y + 6);
+        path.lineTo(x - 7, y);
+        break;
+      }
+      case Push: {
+        path.moveTo(x + 7, y);
+        path.lineTo(x + 1, y + 6);
+        path.lineTo(x + 1, y + 2);
+        path.lineTo(x - 7, y + 2);
+        path.lineTo(x - 7, y - 2);
+        path.lineTo(x + 1, y - 2);
+        path.lineTo(x + 1, y - 6);
+        path.lineTo(x + 7, y);
+        break;
+      }
+    }
+
+    return path;
+  }
 };
 
 class StashButton : public Button {
