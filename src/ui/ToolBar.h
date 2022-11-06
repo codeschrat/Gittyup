@@ -42,6 +42,7 @@ private:
   QToolButton *mNextButton;
 
   QToolButton *mFetchButton;
+  QToolButton *mFetchAllButton;
   QToolButton *mPullButton;
   QToolButton *mPushButton;
 

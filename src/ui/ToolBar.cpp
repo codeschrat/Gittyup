@@ -188,7 +188,7 @@ class RemoteButton : public Button {
   Q_OBJECT
 
 public:
-  enum Kind { Fetch, Pull, Push };
+  enum Kind { Fetch, FetchAll, Pull, Push };
 
   RemoteButton(Kind kind, QWidget *parent = nullptr)
       : Button(parent), mKind(kind) {}
@@ -215,6 +215,16 @@ public:
       path.lineTo(x - 1, y + 6);
       path.lineTo(x - 1, y + 2);
       path.quadTo(x + 8, y + 2, x + 8, y - 6);
+    } else if (mKind == FetchAll) {
+      path.moveTo(x + 8, y - 6);
+      path.quadTo(x + 8, y - 2, x - 1, y - 2);
+      path.lineTo(x - 1, y - 6);
+      path.lineTo(x - 7, y);
+      path.lineTo(x - 1, y + 6);
+      path.lineTo(x - 1, y + 2);
+      path.quadTo(x + 8, y + 2, x + 8, y - 2);
+      path.quadTo(x + 8, y, x - 1, y);
+      path.quadTo(x + 8, y, x + 8, y - 6);
     } else if (mKind == Pull) {
       path.moveTo(x - 7, y);
       path.lineTo(x - 1, y - 6);
@@ -777,6 +787,9 @@ ToolBar::ToolBar(MainWindow *parent) : QToolBar(parent) {
   mFetchButton = new RemoteButton(RemoteButton::Fetch, remote);
   remote->addButton(mFetchButton, tr("Fetch"));
   connect(mFetchButton, &Button::clicked, [this] { currentView()->fetch(); });
+  mFetchAllButton = new RemoteButton(RemoteButton::FetchAll, remote);
+  remote->addButton(mFetchAllButton, tr("Fetch all"));
+  connect(mFetchAllButton, &Button::clicked, [this] { currentView()->fetchAll(); });
 
   mPullButton = new RemoteButton(RemoteButton::Pull, remote);
   mPullButton->setPopupMode(QToolButton::MenuButtonPopup);
@@ -983,6 +996,7 @@ void ToolBar::updateRemote(int ahead, int behind) {
 
   RepoView *view = currentView();
   mFetchButton->setEnabled(view);
+  mFetchAllButton->setEnabled(view);
   mPullButton->setEnabled(view && !view->repo().isBare());
   mPushButton->setEnabled(view);
 }
