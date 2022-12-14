@@ -1026,8 +1026,16 @@ void ToolBar::updateSearch() {
 
 void ToolBar::addFetchButton(QWidget *segmentedButton) {
   mFetchButton = new RemoteButton(RemoteButton::Fetch, segmentedButton);
+  mFetchButton->setPopupMode(QToolButton::MenuButtonPopup);
   static_cast<SegmentedButton *>(segmentedButton)->addButton(mFetchButton, tr("Fetch"));
   connect(mFetchButton, &Button::clicked, [this] { currentView()->fetch(); });
+
+  QMenu *fetchMenu = new QMenu(mFetchButton);
+  mFetchButton->setMenu(fetchMenu);
+  QAction *fetch = fetchMenu->addAction(tr("Fetch"));
+  connect(fetch, &QAction::triggered, [this] { currentView()->fetch(); });
+  QAction *fetchAll = fetchMenu->addAction(tr("Fetch all"));
+  connect(fetchAll, &QAction::triggered, [this] { currentView()->fetchAll(); });
 }
 
 RepoView *ToolBar::currentView() const {
