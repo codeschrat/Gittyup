@@ -35,6 +35,7 @@ private:
   void updateStash();
   void updateView();
   void updateSearch();
+  void addFetchButton(QWidget *segmentedButton);
 
   RepoView *currentView() const;
 

@@ -772,9 +772,7 @@ ToolBar::ToolBar(MainWindow *parent) : QToolBar(parent) {
   SegmentedButton *remote = new SegmentedButton(this);
   addWidget(remote);
 
-  mFetchButton = new RemoteButton(RemoteButton::Fetch, remote);
-  remote->addButton(mFetchButton, tr("Fetch"));
-  connect(mFetchButton, &Button::clicked, [this] { currentView()->fetch(); });
+  addFetchButton(remote);
 
   mPullButton = new RemoteButton(RemoteButton::Pull, remote);
   mPullButton->setPopupMode(QToolButton::MenuButtonPopup);
@@ -1024,6 +1022,12 @@ void ToolBar::updateSearch() {
   RepoView *view = currentView();
   mStarButton->setEnabled(view);
   mSearchField->setEnabled(view);
+}
+
+void ToolBar::addFetchButton(QWidget *segmentedButton) {
+  mFetchButton = new RemoteButton(RemoteButton::Fetch, segmentedButton);
+  static_cast<SegmentedButton *>(segmentedButton)->addButton(mFetchButton, tr("Fetch"));
+  connect(mFetchButton, &Button::clicked, [this] { currentView()->fetch(); });
 }
 
 RepoView *ToolBar::currentView() const {
