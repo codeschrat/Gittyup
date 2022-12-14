@@ -25,6 +25,7 @@ class Setting : public SettingsTempl<Setting> {
 
 public:
   enum class Id {
+    FetchAllIsDefault,
     FetchAutomatically,
     AutomaticFetchPeriodInMinutes,
     PushAfterEachCommit,

@@ -13,9 +13,10 @@
 #include "RepoView.h"
 #include "SearchField.h"
 #include "app/Application.h"
+#include "conf/Settings.h"
 #include "dialogs/PullRequestDialog.h"
-#include "ui/HotkeyManager.h"
 #include "dialogs/SettingsDialog.h"
+#include "ui/HotkeyManager.h"
 #include <QAction>
 #include <QButtonGroup>
 #include <QHBoxLayout>
@@ -1025,10 +1026,22 @@ void ToolBar::updateSearch() {
 }
 
 void ToolBar::addFetchButton(QWidget *segmentedButton) {
+  const bool isFetchAllTheDefault =
+      Settings::instance()->value(Setting::Id::FetchAllIsDefault).toBool();
+
   mFetchButton = new RemoteButton(RemoteButton::Fetch, segmentedButton);
   mFetchButton->setPopupMode(QToolButton::MenuButtonPopup);
-  static_cast<SegmentedButton *>(segmentedButton)->addButton(mFetchButton, tr("Fetch"));
-  connect(mFetchButton, &Button::clicked, [this] { currentView()->fetch(); });
+  const QString &fetchButtonToolTip =
+      isFetchAllTheDefault ? tr("Fetch all") : tr("Fetch");
+  static_cast<SegmentedButton *>(segmentedButton)
+      ->addButton(mFetchButton, fetchButtonToolTip);
+  connect(mFetchButton, &Button::clicked, [this, isFetchAllTheDefault] {
+    if (isFetchAllTheDefault) {
+      currentView()->fetchAll();
+    } else {
+      currentView()->fetch();
+    }
+  });
 
   QMenu *fetchMenu = new QMenu(mFetchButton);
   mFetchButton->setMenu(fetchMenu);

@@ -1,6 +1,7 @@
 #include "Setting.h"
 
 void Setting::initialize(QMap<Id, QString> &keys) {
+  keys[Id::FetchAllIsDefault] = "global/fetchAll";
   keys[Id::FetchAutomatically] = "global/autofetch/enable";
   keys[Id::AutomaticFetchPeriodInMinutes] = "global/autofetch/minutes";
   keys[Id::PushAfterEachCommit] = "global/autopush/enable";
