@@ -10,13 +10,13 @@
 #ifndef TOOLBAR_H
 #define TOOLBAR_H
 
-#include <QAction>
 #include <QToolBar>
 
 class History;
 class MainWindow;
 class RepoView;
 class SearchField;
+class QAction;
 class QButtonGroup;
 class QToolButton;
 

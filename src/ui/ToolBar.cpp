@@ -14,8 +14,6 @@
 #include "SearchField.h"
 #include "app/Application.h"
 #include "dialogs/PullRequestDialog.h"
-#include "git/Branch.h"
-#include "git/Commit.h"
 #include "ui/HotkeyManager.h"
 #include "dialogs/SettingsDialog.h"
 #include <QAction>

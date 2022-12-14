@@ -12,7 +12,6 @@
 #include "ColumnView.h"
 #include "FileContextMenu.h"
 #include "RepoView.h"
-#include "ToolBar.h"
 #include "TreeModel.h"
 #include "git/Blob.h"
 #include "git/Commit.h"

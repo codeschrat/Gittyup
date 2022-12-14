@@ -16,7 +16,6 @@
 #include "TemplateButton.h"
 #include "DoubleTreeWidget.h"
 #include "SpellChecker.h"
-#include "TreeWidget.h"
 #include "TemplateButton.h"
 #include "app/Application.h"
 #include "conf/Settings.h"
