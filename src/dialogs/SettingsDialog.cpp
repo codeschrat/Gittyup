@@ -25,6 +25,7 @@
 #include "update/Updater.h"
 #include <QAction>
 #include <QApplication>
+#include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -38,6 +39,7 @@
 #include <QPointer>
 #include <QProcess>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QSaveFile>
 #include <QShortcut>
 #include <QSpinBox>
@@ -696,10 +698,38 @@ public:
       Settings::instance()->setValue(Setting::Id::SshKeyFilePath, text);
     });
 
+    QHBoxLayout *fetchOptions = composeFetchOptions();
+
     QFormLayout *layout = new QFormLayout(this);
     layout->addRow(tr("Path to SSH config file:"), sshConfigPathBox);
     layout->addRow(tr("Path to default / fallback SSH key file:"),
                    sshKeyPathBox);
+    layout->addRow(tr("Fetch per default from:"), fetchOptions);
+  }
+
+private:
+  QHBoxLayout *composeFetchOptions() {
+    QRadioButton *fetchOrigin = new QRadioButton(tr("Origin"));
+    QRadioButton *fetchAll = new QRadioButton(tr("All remotes"));
+    QButtonGroup *fetchOptions = new QButtonGroup();
+    fetchOptions->addButton(fetchOrigin);
+    fetchOptions->addButton(fetchAll);
+    connect(fetchOptions, &QButtonGroup::idClicked, this, [fetchAll](int) {
+      Settings::instance()->setValue(Setting::Id::FetchAllIsDefault,
+                                     fetchAll->isChecked());
+    });
+
+    const bool isFetchAllTheDefault =
+        Settings::instance()->value(Setting::Id::FetchAllIsDefault).toBool();
+    fetchAll->setChecked(isFetchAllTheDefault);
+    fetchOrigin->setChecked(!isFetchAllTheDefault);
+
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    foreach (QAbstractButton *const button, fetchOptions->buttons()) {
+      buttonLayout->addWidget(button);
+    }
+
+    return buttonLayout;
   }
 };
 
