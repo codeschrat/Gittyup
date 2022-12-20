@@ -97,27 +97,25 @@ MainWindow::MainWindow(const git::Repository &repo, QWidget *parent,
   // Update title and refresh when settings change.
   mFullPath =
       Settings::instance()->value(Setting::Id::ShowFullRepoPath).toBool();
-  connect(Settings::instance(), &Settings::settingsChanged, this,
-          [this](bool refresh) {
-            Settings *settings = Settings::instance();
+  void (Settings::*settingsChanged)(bool) = &Settings::settingsChanged;
+  connect(Settings::instance(), settingsChanged, this, [this](bool refresh) {
+    Settings *settings = Settings::instance();
 
-            bool menuBarHidden =
-                settings->value(Setting::Id::HideMenuBar).toBool();
-            if (mMenuBar->isHidden() != menuBarHidden)
-              mMenuBar->setHidden(menuBarHidden);
+    bool menuBarHidden = settings->value(Setting::Id::HideMenuBar).toBool();
+    if (mMenuBar->isHidden() != menuBarHidden)
+      mMenuBar->setHidden(menuBarHidden);
 
-            bool fullPath =
-                settings->value(Setting::Id::ShowFullRepoPath).toBool();
-            if (mFullPath != fullPath) {
-              mFullPath = fullPath;
-              updateWindowTitle();
-            }
+    bool fullPath = settings->value(Setting::Id::ShowFullRepoPath).toBool();
+    if (mFullPath != fullPath) {
+      mFullPath = fullPath;
+      updateWindowTitle();
+    }
 
-            if (refresh) {
-              for (int i = 0; i < count(); ++i)
-                view(i)->refresh();
-            }
-          });
+    if (refresh) {
+      for (int i = 0; i < count(); ++i)
+        view(i)->refresh();
+    }
+  });
 
   // Create splitter.
   QSplitter *splitter = new QSplitter(this);

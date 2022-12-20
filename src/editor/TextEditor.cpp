@@ -152,7 +152,8 @@ TextEditor::TextEditor(QWidget *parent) : ScintillaIFace(parent) {
 
   // Apply default settings.
   applySettings();
-  connect(Settings::instance(), &Settings::settingsChanged, this,
+  void (Settings::*settingsChanged)(bool) = &Settings::settingsChanged;
+  connect(Settings::instance(), settingsChanged, this,
           &TextEditor::applySettings);
 
   // Update geometry when the scroll bar becomes visible.

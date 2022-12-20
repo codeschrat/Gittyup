@@ -113,6 +113,7 @@ QVariant Settings::value(Setting::Id id, const QVariant &defaultValue) const {
 
 void Settings::setValue(Setting::Id id, const QVariant &value) {
   setValue(Setting::key(id), value);
+  emit settingsChanged(id);
 }
 
 QString Settings::lexer(const QString &filename) {

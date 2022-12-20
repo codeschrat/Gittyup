@@ -1026,22 +1026,10 @@ void ToolBar::updateSearch() {
 }
 
 void ToolBar::addFetchButton(QWidget *segmentedButton) {
-  const bool isFetchAllTheDefault =
-      Settings::instance()->value(Setting::Id::FetchAllIsDefault).toBool();
-
   mFetchButton = new RemoteButton(RemoteButton::Fetch, segmentedButton);
   mFetchButton->setPopupMode(QToolButton::MenuButtonPopup);
-  const QString &fetchButtonToolTip =
-      isFetchAllTheDefault ? tr("Fetch all") : tr("Fetch");
-  static_cast<SegmentedButton *>(segmentedButton)
-      ->addButton(mFetchButton, fetchButtonToolTip);
-  connect(mFetchButton, &Button::clicked, [this, isFetchAllTheDefault] {
-    if (isFetchAllTheDefault) {
-      currentView()->fetchAll();
-    } else {
-      currentView()->fetch();
-    }
-  });
+  static_cast<SegmentedButton *>(segmentedButton)->addButton(mFetchButton);
+  updateFetchButton();
 
   QMenu *fetchMenu = new QMenu(mFetchButton);
   mFetchButton->setMenu(fetchMenu);
@@ -1049,6 +1037,32 @@ void ToolBar::addFetchButton(QWidget *segmentedButton) {
   connect(fetch, &QAction::triggered, [this] { currentView()->fetch(); });
   QAction *fetchAll = fetchMenu->addAction(tr("Fetch all"));
   connect(fetchAll, &QAction::triggered, [this] { currentView()->fetchAll(); });
+
+  void (Settings::*settingsChanged)(Setting::Id) = &Settings::settingsChanged;
+  connect(Settings::instance(), settingsChanged, this,
+          [this](const Setting::Id changedSetting) {
+            if (changedSetting == Setting::Id::FetchAllIsDefault) {
+              updateFetchButton();
+            }
+          });
+}
+
+void ToolBar::updateFetchButton() {
+  const bool isFetchAllTheDefault =
+      Settings::instance()->value(Setting::Id::FetchAllIsDefault).toBool();
+
+  const QString &fetchButtonToolTip =
+      isFetchAllTheDefault ? tr("Fetch all") : tr("Fetch");
+  mFetchButton->setToolTip(fetchButtonToolTip);
+
+  disconnect(mFetchButton, &Button::clicked, nullptr, nullptr);
+  connect(mFetchButton, &Button::clicked, this, [this, isFetchAllTheDefault] {
+    if (isFetchAllTheDefault) {
+      currentView()->fetchAll();
+    } else {
+      currentView()->fetch();
+    }
+  });
 }
 
 RepoView *ToolBar::currentView() const {

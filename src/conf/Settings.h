@@ -62,6 +62,7 @@ public:
 
 signals:
   void settingsChanged(bool refresh = false);
+  void settingsChanged(Setting::Id);
 
 private:
   Settings(QObject *parent = nullptr);
